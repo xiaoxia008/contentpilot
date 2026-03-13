@@ -9,6 +9,7 @@ from contentpilot.commands.draft import draft
 from contentpilot.commands.title import title
 from contentpilot.commands.analyze import analyze
 from contentpilot.commands.publish import publish
+from contentpilot.commands.batch import batch
 
 console = Console()
 
@@ -30,6 +31,7 @@ cli.add_command(draft)
 cli.add_command(title)
 cli.add_command(analyze)
 cli.add_command(publish)
+cli.add_command(batch)
 
 
 if __name__ == "__main__":

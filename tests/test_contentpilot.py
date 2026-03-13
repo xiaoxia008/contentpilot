@@ -87,3 +87,8 @@ class TestAnalyze:
     def test_help(self, runner):
         result = runner.invoke(cli, ["analyze", "--help"])
         assert result.exit_code == 0
+
+class TestBatch:
+    def test_help(self, runner):
+        result = runner.invoke(cli, ["batch", "--help"])
+        assert result.exit_code == 0

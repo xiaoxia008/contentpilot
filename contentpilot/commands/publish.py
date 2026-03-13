@@ -74,6 +74,32 @@ PLATFORM_FORMATS = {
             "互动性强",
         ],
     },
+    "bilibili": {
+        "name": "B站",
+        "title_max": 30,
+        "content_max": 3000,
+        "emoji": "适度玩梗",
+        "hashtags": (3, 5),
+        "rules": [
+            "标题要有吸引力，可玩梗",
+            "内容干货+趣味并重",
+            "引导三连(点赞投币收藏)",
+            "适当加入B站特色用语",
+        ],
+    },
+    "kuaishou": {
+        "name": "快手",
+        "title_max": 20,
+        "content_max": 1000,
+        "emoji": "接地气",
+        "hashtags": (3, 5),
+        "rules": [
+            "语言朴实接地气",
+            "真实有烟火气",
+            "引导双击关注",
+            "避免太书面化",
+        ],
+    },
 }
 
 
