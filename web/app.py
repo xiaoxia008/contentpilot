@@ -112,9 +112,9 @@ st.markdown('<div class="main-header">🚀 ContentPilot</div>', unsafe_allow_htm
 st.markdown('<div class="sub-header">AI内容创作助手 — 找选题、写内容、优化发布</div>', unsafe_allow_html=True)
 
 # 功能 Tab
-tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6, tab7 = st.tabs([
     "🎯 爆款选题", "✏️ 初稿生成", "📌 标题优化",
-    "💡 灵感衍生", "📊 竞品分析", "📤 发布适配"
+    "💡 灵感衍生", "📊 竞品分析", "📤 发布适配", "🚫 违禁词检测"
 ])
 
 # ===== Tab 1: 爆款选题 =====
@@ -247,6 +247,38 @@ with tab6:
         if result:
             st.markdown(f'<div class="result-box">{result}</div>', unsafe_allow_html=True)
             st.download_button("📥 下载", result, f"adapted_{to_p}.md", "text/markdown", key="dl6")
+
+# ===== Tab 7: 违禁词检测 =====
+with tab7:
+    st.header("🚫 违禁词检测")
+    st.caption("检查文案中的违禁词，避免被平台限流")
+
+    content7 = st.text_area("📄 粘贴要检测的文案", height=200, key="c7")
+    strict = st.checkbox("严格模式（含广告法违禁词）")
+
+    if st.button("🔍 开始检测", type="primary", disabled=not content7):
+        sensitive = {
+            "广告法违禁词": ["最好", "最佳", "第一", "唯一", "顶级", "绝对", "100%", "永久", "万能"],
+            "平台敏感词": ["加微信", "私信我", "VX", "微信号", "免费领", "扫码"],
+            "夸大宣传": ["震惊", "保证", "必买", "必看", "史上最强"],
+            "医疗违禁词": ["治愈", "根治", "药到病除", "无副作用", "立即见效"],
+            "金融违禁词": ["稳赚", "保本", "零风险", "必涨", "暴富"],
+        }
+
+        found = []
+        cats = sensitive.keys() if strict else ["平台敏感词", "夸大宣传"]
+
+        for cat in cats:
+            for word in sensitive.get(cat, []):
+                if word in content7:
+                    found.append((cat, word))
+
+        if found:
+            st.warning(f"⚠️ 发现 {len(found)} 个可疑词")
+            for cat, word in found:
+                st.error(f"**{cat}**: {word}")
+        else:
+            st.success("✅ 未发现违禁词")
 
 # ===== 页脚 =====
 st.markdown("---")

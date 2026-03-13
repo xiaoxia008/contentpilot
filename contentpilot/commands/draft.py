@@ -1,7 +1,4 @@
-"""AI 初稿生成模块 - P0 核心功能
-
-从第一性原理: 解决"写不出来"的核心痛点
-"""
+"""AI 初稿生成模块 - 集成平台专用模板"""
 
 import os
 
@@ -11,96 +8,89 @@ from rich.panel import Panel
 
 from contentpilot.utils.ai import call_ai
 from contentpilot.utils.config import get_api_config
+from contentpilot.utils.templates import get_template, list_templates, PLATFORM_TEMPLATES
 
 console = Console()
-
-# 平台风格
-PLATFORM_STYLES = {
-    "xiaohongshu": "小红书风格: 活泼亲切、带emoji、口语化、引发互动、15-20字标题",
-    "douyin": "抖音风格: 简洁有力、有节奏感、开头要有钩子、引导完播",
-    "wechat": "公众号风格: 专业深度、有观点、分章节、信息量大",
-    "zhihu": "知乎风格: 理性专业、有理有据、干货多、直接切入主题",
-    "weibo": "微博风格: 短平快、有情绪、互动性强、引发转发",
-    "bilibili": "B站风格: 年轻化、有梗、干货+趣味并重、引导三连(点赞投币收藏)",
-    "kuaishou": "快手风格: 接地气、真实、有烟火气、老铁文化、引导双击关注",
-}
 
 
 @click.command()
 @click.argument("topic")
 @click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
-@click.option("--style", default=None, help="语气风格 (如: 专业/幽默/温暖)")
-@click.option("--outline", is_flag=True, help="先生成大纲，确认后再生成正文")
+@click.option("--style", default=None, help="语气风格")
+@click.option("--template", default=None, help="使用专用模板")
 @click.option("-o", "--output", default=None, help="输出文件路径")
-def draft(topic, platform, style, outline, output):
+def draft(topic, platform, style, template, output):
     """AI 初稿生成 - 从选题直接生成可发布的初稿。
 
-    TOPIC: 选题或标题
+    支持平台专用模板: 小红书(种草/探店/教程/好物), 抖音(脚本/直播/标题), B站(视频/动态)
 
     \b
     示例:
-        contentpilot draft "5个减肥食谱推荐" -p xiaohongshu
-        contentpilot draft "Python入门教程" -p douyin --style 专业
-        contentpilot draft "理财心得" -p wechat --outline
+        contentpilot draft "Python自动化办公" -p xiaohongshu
+        contentpilot draft "咖啡店探店" -p xiaohongshu --template 探店文案
+        contentpilot draft "Python教程" -p douyin --template 短视频脚本
     """
     api_key, base_url, model = get_api_config()
     if not api_key:
         console.print("[red]✗[/red] 请设置 OPENAI_API_KEY")
         return
 
-    platform_style = PLATFORM_STYLES.get(platform, PLATFORM_STYLES["xiaohongshu"])
-    style_str = f"\n语气风格: {style}" if style else ""
-
     console.print(f"\n[cyan]📝 选题:[/cyan] {topic}")
     console.print(f"[cyan]📱 平台:[/cyan] {platform}")
+    if template:
+        console.print(f"[cyan]📋 模板:[/cyan] {template}")
     console.print("\n[green]AI 正在创作...[/green]\n")
 
-    if outline:
-        # 先生成大纲
-        outline_prompt = f"""你是一位{platform}内容创作专家。
+    # 优先使用专用模板
+    if template:
+        tmpl = get_template(platform, template)
+        if tmpl:
+            prompt = tmpl["prompt"].format(topic=topic)
+        else:
+            console.print(f"[yellow]⚠️ 未找到模板 '{template}'，使用通用生成[/yellow]")
+            prompt = _generic_prompt(platform, topic, style)
+    else:
+        prompt = _generic_prompt(platform, topic, style)
 
-选题: {topic}
-{platform_style}{style_str}
+    if style:
+        prompt += f"\n语气风格: {style}"
 
-请先生成内容大纲，包含:
-1. 开头钩子（如何抓住注意力）
-2. 核心要点（3-5个，每个一句话说明）
-3. 结尾互动引导
+    result = call_ai(prompt, api_key, base_url, model)
 
-输出简洁的大纲，不需要展开写。"""
-
-        result = call_ai(outline_prompt, api_key, base_url, model)
-        if result:
-            console.print(Panel(result, title="📋 内容大纲", border_style="yellow"))
-            console.print("\n[dim]确认大纲后，直接运行不带 --outline 生成完整初稿[/dim]")
-        return
-
-    # 生成完整初稿
-    draft_prompt = f"""你是一位{platform}内容创作专家。
-
-选题: {topic}
-{platform_style}{style_str}
-
-请生成一篇完整的帖子内容，要求:
-1. 标题吸引眼球
-2. 开头3秒抓住注意力
-3. 正文分段清晰，每段有小标题
-4. 适当使用emoji增加可读性
-5. 结尾引导互动（点赞/评论/收藏）
-6. 附上5-8个相关话题标签
-
-直接输出完整内容，不要有多余解释。"""
-
-    result = call_ai(draft_prompt, api_key, base_url, model)
     if result:
         console.print(Panel(result, title=f"📄 {topic}", border_style="green"))
 
-        # 保存
         if not output:
-            output = f"draft_{platform}.md"
+            safe_topic = topic[:20].replace(" ", "_")
+            output = f"draft_{platform}_{safe_topic}.md"
         with open(output, "w", encoding="utf-8") as f:
             f.write(result)
         console.print(f"\n[green]✓[/green] 已保存: {output}")
+        console.print("\n[dim]💡 下一步: contentpilot title 优化标题 | contentpilot check 检测违禁词[/dim]")
 
-        # 提示下一步
-        console.print("\n[dim]💡 下一步: contentpilot title 优化标题 | contentpilot publish 适配多平台[/dim]")
+
+def _generic_prompt(platform, topic, style):
+    """通用生成 prompt"""
+    platform_styles = {
+        "xiaohongshu": "小红书风格: 活泼亲切、带emoji、口语化、引发互动",
+        "douyin": "抖音风格: 简洁有力、有节奏感、开头有钩子",
+        "wechat": "公众号风格: 专业深度、有观点、分章节",
+        "zhihu": "知乎风格: 理性专业、有理有据",
+        "weibo": "微博风格: 短平快、有情绪、互动性强",
+        "bilibili": "B站风格: 年轻化、有梗、干货+趣味",
+        "kuaishou": "快手风格: 接地气、真实",
+    }
+    p_style = platform_styles.get(platform, platform_styles["xiaohongshu"])
+
+    return f"""你是一位{platform}内容创作专家。
+
+选题: {topic}
+风格: {p_style}
+
+请生成完整的帖子内容，包含:
+1. 标题（吸引眼球）
+2. 正文（分段清晰，适当emoji）
+3. 结尾互动引导
+4. 话题标签(3-8个)
+
+直接输出，不要解释。"""

@@ -12,6 +12,7 @@ from contentpilot.commands.publish import publish
 from contentpilot.commands.batch import batch
 from contentpilot.commands.inspire import inspire
 from contentpilot.commands.track import track
+from contentpilot.commands.check import check
 
 console = Console()
 
@@ -36,6 +37,7 @@ cli.add_command(publish)
 cli.add_command(batch)
 cli.add_command(inspire)
 cli.add_command(track)
+cli.add_command(check)
 
 
 if __name__ == "__main__":
