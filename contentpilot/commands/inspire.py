@@ -7,6 +7,7 @@
 """
 
 import os
+import re
 
 import click
 from rich.console import Console
@@ -78,7 +79,9 @@ def find_angles(topic, platform, count):
         for i, angle in enumerate(angles, 1):
             console.print(Panel(angle, title=f"🎯 原创角度 {i}", border_style="cyan"))
 
-        output_file = f"angles_{topic[:20]}.txt"
+        safe_topic = re.sub(r'[^\w\u4e00-\u9fff-]', '_', topic)[:20]
+        safe_topic = re.sub(r'_+', '_', safe_topic).strip('_') or "untitled"
+        output_file = f"angles_{safe_topic}.txt"
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(result)
         console.print(f"\n[green]✓[/green] 已保存: {output_file}")

@@ -4,6 +4,7 @@
 """
 
 import os
+import re
 
 import click
 from rich.console import Console
@@ -117,8 +118,10 @@ def _generate_topics(strategy_name, niche, platform, count, extra):
         for i, t in enumerate(topics, 1):
             console.print(Panel(t, title=f"💡 选题 {i}", border_style="cyan"))
 
-        # 保存
-        output_file = f"topics_{strategy_name}_{niche}.txt"
+        # 保存（文件名安全处理）
+        safe_niche = re.sub(r'[^\w\u4e00-\u9fff-]', '_', niche)[:20]
+        safe_niche = re.sub(r'_+', '_', safe_niche).strip('_') or "untitled"
+        output_file = f"topics_{strategy_name}_{safe_niche}.txt"
         with open(output_file, "w", encoding="utf-8") as f:
             f.write(result)
         console.print(f"\n[green]✓[/green] 已保存: {output_file}")

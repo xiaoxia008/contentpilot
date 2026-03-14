@@ -134,17 +134,21 @@ def _check_content(content, categories):
 
     for cat_name, cat_data in categories.items():
         for word in cat_data["words"]:
-            # 使用正则匹配中文词汇边界
+            # 使用正则匹配，英文部分大小写不敏感
             pattern = re.escape(word)
-            matches = re.findall(pattern, content)
+            # 检查是否包含英文字母，如果有则用 IGNORECASE
+            has_ascii = any(c.isascii() and c.isalpha() for c in word)
+            flags = re.IGNORECASE if has_ascii else 0
+            matches = re.findall(pattern, content, flags)
             count = len(matches)
 
             if count > 0:
                 if cat_name not in found:
                     found[cat_name] = []
 
-                # 获取上下文
-                idx = content.find(word)
+                # 获取上下文（使用正则查找以支持大小写不敏感）
+                match = re.search(pattern, content, flags)
+                idx = match.start() if match else content.lower().find(word.lower())
                 start = max(0, idx - 15)
                 end = min(len(content), idx + len(word) + 15)
                 context = content[start:end].replace("\n", " ").strip()
