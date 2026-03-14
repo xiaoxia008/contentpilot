@@ -1,0 +1,91 @@
+{
+  "results": [
+    {
+      "name": "topic_hot",
+      "success": true,
+      "latency_s": 18.09,
+      "output_length": 830,
+      "validators": {
+        "has_structure": {
+          "passed": true,
+          "detail": "headers=True, sections=True"
+        },
+        "min_length_100": {
+          "passed": true,
+          "detail": "length=830"
+        },
+        "max_length_5000": {
+          "passed": true,
+          "detail": "length=830"
+        },
+        "contains_chinese": {
+          "passed": true,
+          "detail": "has_chinese=True"
+        },
+        "has_keywords": {
+          "passed": true,
+          "detail": "found=['选题', '角度', '流量', '内容', '标题'], ratio=100%"
+        },
+        "no_placeholder": {
+          "passed": true,
+          "detail": "placeholders_found=[]"
+        }
+      }
+    },
+    {
+      "name": "draft",
+      "success": true,
+      "latency_s": 8.82,
+      "output_length": 450,
+      "validators": {
+        "has_structure": {
+          "passed": true,
+          "detail": "headers=False, sections=True"
+        },
+        "min_length_100": {
+          "passed": true,
+          "detail": "length=450"
+        },
+        "contains_chinese": {
+          "passed": true,
+          "detail": "has_chinese=True"
+        },
+        "no_placeholder": {
+          "passed": true,
+          "detail": "placeholders_found=[]"
+        }
+      }
+    },
+    {
+      "name": "title",
+      "success": true,
+      "latency_s": 15.94,
+      "output_length": 524,
+      "validators": {
+        "has_structure": {
+          "passed": true,
+          "detail": "headers=False, sections=True"
+        },
+        "min_length_100": {
+          "passed": true,
+          "detail": "length=524"
+        },
+        "contains_chinese": {
+          "passed": true,
+          "detail": "has_chinese=True"
+        },
+        "no_placeholder": {
+          "passed": true,
+          "detail": "placeholders_found=[]"
+        }
+      }
+    }
+  ],
+  "summary": {
+    "total": 3,
+    "passed": 3,
+    "validators_total": 14,
+    "validators_passed": 14,
+    "avg_latency": 14.28
+  }
+}
