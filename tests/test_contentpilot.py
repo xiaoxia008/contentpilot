@@ -268,6 +268,23 @@ class TestCheck:
         assert len(result_upper) > 0  # 大写应该能检测到
 
 
+class TestPipeline:
+    """内容生产流水线测试"""
+
+    def test_help(self, runner):
+        result = runner.invoke(cli, ["pipeline", "--help"])
+        assert result.exit_code == 0
+        assert "流水线" in result.output or "pipeline" in result.output.lower()
+
+    def test_invalid_platform(self, runner):
+        result = runner.invoke(cli, ["pipeline", "测试", "-p", "badplatform"])
+        assert result.exit_code != 0 or "不支持的平台" in result.output
+
+    def test_count_limit(self, runner):
+        result = runner.invoke(cli, ["pipeline", "测试", "-n", "100"])
+        assert result.exit_code != 0
+
+
 class TestBrief:
     """每日简报测试"""
 

@@ -14,6 +14,7 @@ from contentpilot.commands.inspire import inspire
 from contentpilot.commands.track import track
 from contentpilot.commands.check import check
 from contentpilot.commands.brief import brief
+from contentpilot.commands.pipeline import pipeline
 
 console = Console()
 
@@ -40,6 +41,7 @@ cli.add_command(inspire)
 cli.add_command(track)
 cli.add_command(check)
 cli.add_command(brief)
+cli.add_command(pipeline)
 
 
 if __name__ == "__main__":
