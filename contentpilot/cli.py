@@ -13,6 +13,7 @@ from contentpilot.commands.batch import batch
 from contentpilot.commands.inspire import inspire
 from contentpilot.commands.track import track
 from contentpilot.commands.check import check
+from contentpilot.commands.brief import brief
 
 console = Console()
 
@@ -38,6 +39,7 @@ cli.add_command(batch)
 cli.add_command(inspire)
 cli.add_command(track)
 cli.add_command(check)
+cli.add_command(brief)
 
 
 if __name__ == "__main__":

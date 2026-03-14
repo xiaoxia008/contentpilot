@@ -268,6 +268,47 @@ class TestCheck:
         assert len(result_upper) > 0  # 大写应该能检测到
 
 
+class TestBrief:
+    """每日简报测试"""
+
+    def test_help(self, runner):
+        result = runner.invoke(cli, ["brief", "--help"])
+        assert result.exit_code == 0
+        assert "简报" in result.output or "brief" in result.output.lower()
+
+
+class TestValidators:
+    """输入验证测试"""
+
+    def test_valid_platforms(self, runner):
+        """支持的平台应该被接受"""
+        for platform in ["xiaohongshu", "douyin", "bilibili", "wechat", "zhihu", "weibo", "kuaishou"]:
+            result = runner.invoke(cli, ["topic", "hot", "测试", "-p", platform])
+            # 不应该因为平台参数报错
+            assert "不是支持的平台" not in result.output
+
+    def test_invalid_platform(self, runner):
+        """不支持的平台应该报错"""
+        result = runner.invoke(cli, ["topic", "hot", "测试", "-p", "invalid_platform"])
+        assert result.exit_code != 0 or "不支持的平台" in result.output
+
+    def test_count_validation(self, runner):
+        """count超出范围应该报错"""
+        result = runner.invoke(cli, ["topic", "hot", "测试", "-n", "100"])
+        assert result.exit_code != 0 or "range" in result.output.lower()
+
+    def test_count_minimum(self, runner):
+        """count为0应该报错"""
+        result = runner.invoke(cli, ["topic", "hot", "测试", "-n", "0"])
+        assert result.exit_code != 0
+
+    def test_valid_count(self, runner):
+        """正常范围的count应该被接受"""
+        result = runner.invoke(cli, ["topic", "hot", "测试", "-n", "10"])
+        # 不应该因为count参数报错
+        assert "Invalid value" not in result.output if result.output else True
+
+
 class TestTrackInsights:
     """track insights 新功能测试 - TDD"""
 

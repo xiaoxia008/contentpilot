@@ -9,14 +9,15 @@ from rich.panel import Panel
 
 from contentpilot.utils.ai import call_ai
 from contentpilot.utils.config import get_api_config
+from contentpilot.utils.validators import PLATFORM, COUNT
 
 console = Console()
 
 
 @click.command()
 @click.argument("content", type=click.Path(exists=True))
-@click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
-@click.option("-n", "--count", default=5, help="生成数量")
+@click.option("-p", "--platform", default="xiaohongshu", type=PLATFORM, help="目标平台")
+@click.option("-n", "--count", default=5, type=COUNT, help="生成数量(1-20)")
 @click.option("-o", "--output", default=None, help="输出文件路径")
 def title(content, platform, count, output):
     """AI 标题优化 - 生成多个高点击率标题备选。

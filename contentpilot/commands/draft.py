@@ -9,13 +9,14 @@ from rich.panel import Panel
 from contentpilot.utils.ai import call_ai
 from contentpilot.utils.config import get_api_config
 from contentpilot.utils.templates import get_template, list_templates, PLATFORM_TEMPLATES
+from contentpilot.utils.validators import PLATFORM
 
 console = Console()
 
 
 @click.command()
 @click.argument("topic")
-@click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
+@click.option("-p", "--platform", default="xiaohongshu", type=PLATFORM, help="目标平台")
 @click.option("--style", default=None, help="语气风格")
 @click.option("--template", default=None, help="使用专用模板")
 @click.option("-o", "--output", default=None, help="输出文件路径")

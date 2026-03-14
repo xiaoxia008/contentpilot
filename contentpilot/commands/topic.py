@@ -13,6 +13,7 @@ from rich.table import Table
 
 from contentpilot.utils.ai import call_ai
 from contentpilot.utils.config import get_api_config
+from contentpilot.utils.validators import PLATFORM, COUNT
 
 console = Console()
 
@@ -57,8 +58,8 @@ def topic():
 
 @topic.command("hot")
 @click.argument("niche")
-@click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
-@click.option("-n", "--count", default=5, help="生成数量")
+@click.option("-p", "--platform", default="xiaohongshu", type=PLATFORM, help="目标平台")
+@click.option("-n", "--count", default=5, type=COUNT, help="生成数量(1-20)")
 def hot_topics(niche, platform, count):
     """热点追踪选题 - 结合当下热点快速出内容。"""
     _generate_topics("hot", niche, platform, count, {})
@@ -67,8 +68,8 @@ def hot_topics(niche, platform, count):
 @topic.command("pain")
 @click.argument("niche")
 @click.option("--audience", default="大众", help="目标受众")
-@click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
-@click.option("-n", "--count", default=5, help="生成数量")
+@click.option("-p", "--platform", default="xiaohongshu", type=PLATFORM, help="目标平台")
+@click.option("-n", "--count", default=5, type=COUNT, help="生成数量(1-20)")
 def pain_topics(niche, audience, platform, count):
     """痛点挖掘选题 - 解决用户真实痛点。"""
     _generate_topics("pain", niche, platform, count, {"audience": audience})
@@ -76,8 +77,8 @@ def pain_topics(niche, audience, platform, count):
 
 @topic.command("evergreen")
 @click.argument("niche")
-@click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
-@click.option("-n", "--count", default=5, help="生成数量")
+@click.option("-p", "--platform", default="xiaohongshu", type=PLATFORM, help="目标平台")
+@click.option("-n", "--count", default=5, type=COUNT, help="生成数量(1-20)")
 def evergreen_topics(niche, platform, count):
     """常青内容选题 - 长期有搜索价值。"""
     _generate_topics("evergreen", niche, platform, count, {})
@@ -85,8 +86,8 @@ def evergreen_topics(niche, platform, count):
 
 @topic.command("series")
 @click.argument("niche")
-@click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
-@click.option("-n", "--count", default=5, help="系列篇数")
+@click.option("-p", "--platform", default="xiaohongshu", type=PLATFORM, help="目标平台")
+@click.option("-n", "--count", default=5, type=COUNT, help="系列篇数(1-20)")
 def series_topics(niche, platform, count):
     """系列内容选题 - 打造内容矩阵。"""
     _generate_topics("series", niche, platform, count, {})

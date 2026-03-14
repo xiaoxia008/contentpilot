@@ -15,6 +15,7 @@ from rich.panel import Panel
 
 from contentpilot.utils.ai import call_ai
 from contentpilot.utils.config import get_api_config
+from contentpilot.utils.validators import PLATFORM, COUNT
 
 console = Console()
 
@@ -34,8 +35,8 @@ def inspire():
 
 @inspire.command("angles")
 @click.argument("topic")
-@click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
-@click.option("-n", "--count", default=5, help="衍生数量")
+@click.option("-p", "--platform", default="xiaohongshu", type=PLATFORM, help="目标平台")
+@click.option("-n", "--count", default=5, type=COUNT, help="衍生数量(1-20)")
 def find_angles(topic, platform, count):
     """从一个主题找到多个原创角度。
 
@@ -89,8 +90,8 @@ def find_angles(topic, platform, count):
 
 @inspire.command("from-trend")
 @click.argument("trend")
-@click.option("-p", "--platform", default="xiaohongshu", help="目标平台")
-@click.option("-n", "--count", default=5, help="衍生数量")
+@click.option("-p", "--platform", default="xiaohongshu", type=PLATFORM, help="目标平台")
+@click.option("-n", "--count", default=5, type=COUNT, help="衍生数量(1-20)")
 def from_trend(trend, platform, count):
     """从趋势热点衍生原创内容灵感。
 
@@ -135,8 +136,8 @@ def from_trend(trend, platform, count):
 
 @inspire.command("video-ideas")
 @click.argument("topic")
-@click.option("-p", "--platform", default="douyin", help="目标平台")
-@click.option("-n", "--count", default=3, help="数量")
+@click.option("-p", "--platform", default="douyin", type=PLATFORM, help="目标平台")
+@click.option("-n", "--count", default=3, type=COUNT, help="数量(1-20)")
 def video_ideas(topic, platform, count):
     """从文字内容主题衍生视频创意。
 
